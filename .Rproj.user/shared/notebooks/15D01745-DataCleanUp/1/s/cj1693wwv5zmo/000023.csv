@@ -1,0 +1,4 @@
+"0","ggplot(avg_all_time_greats, aes(x=grid, y=win)) +"
+"0","  geom_point() +"
+"0","  scale_x_continuous(limits=c(0,35)) +"
+"0","  scale_y_continuous(limits=c(0,0.5))"

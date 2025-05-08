@@ -1,0 +1,3 @@
+"0","ggplot(world_champs_wins, aes(y = x, x = surname)) +"
+"0","  geom_bar(stat=""identity"") +"
+"0","  theme(axis.text.x = element_text(angle = 45, vjust=1, hjust=1))"

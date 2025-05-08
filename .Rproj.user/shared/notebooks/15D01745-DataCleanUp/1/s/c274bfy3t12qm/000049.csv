@@ -1,0 +1,4 @@
+"0","merged$fullname = paste(merged$forename, merged$surname)"
+"0","all_time_greats = merged[(merged$fullname %in% c(""Max Verstappen"", ""Lewis Hamilton"", ""Sebastian Vettel"", ""Michael Schumacher"", ""Ayrton Senna"", ""Juan Fangio"")), ]"
+"0","all_time_greats = merge(all_time_greats, race_info, by=""raceId"")"
+"0","all_time_greats$win = ifelse(all_time_greats$positionOrder == 1, 1, 0)"

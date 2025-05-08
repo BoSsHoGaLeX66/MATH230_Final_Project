@@ -1,0 +1,1 @@
+{"frames":[],"message":"Error in ggplot(StartUp, aes(x = Investment.Amount..USD., y = Industry,  : \n  could not find function \"ggplot\"\n"}

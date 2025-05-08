@@ -1,0 +1,2 @@
+"0","subplot(champs, greats, nrows=1)"
+"2","Warning: [38;5;232mRemoved 2565 rows containing non-finite outside the scale range (`stat_density2d()`).[39m"

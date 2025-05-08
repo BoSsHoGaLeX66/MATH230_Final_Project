@@ -1,0 +1,4 @@
+"0","library(tidyr)"
+"0","big_data = merge(merged, race_info, by=""raceId"")"
+"0","big_data = merge(big_data, driver_standings, by=c(""driverId"", ""raceId""))"
+"0","big_data[big_data$year == 2024, ]"

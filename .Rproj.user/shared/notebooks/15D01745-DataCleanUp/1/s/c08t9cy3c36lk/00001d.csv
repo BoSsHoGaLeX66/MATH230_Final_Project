@@ -1,0 +1,5 @@
+"0","world_champs = read.csv(""data/world_champs.csv"")"
+"0",""
+"0","world_champs_races = merged[(merged$surname %in% world_champs$Last) & (merged$forename %in% world_champs$First), ]"
+"0","world_champs_races = merge(world_champs_races, race_info, by=""raceId"")"
+"0","world_champs_races"

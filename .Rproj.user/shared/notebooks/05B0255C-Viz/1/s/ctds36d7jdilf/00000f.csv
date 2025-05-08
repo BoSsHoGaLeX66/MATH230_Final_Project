@@ -1,0 +1,11 @@
+"0","library(ggridges)"
+"0","StartUp = read.csv(""data/startup_growth_investment_data.csv"")"
+"0","ggplot(StartUp, aes(x = Investment.Amount..USD., y = Industry, "
+"0","                    fill = after_stat(x))) +"
+"0","  geom_density_ridges_gradient(scale = 2, rel_min_height = 0.05,"
+"0","                               quantile_lines = TRUE) +"
+"0","  scale_fill_viridis_c() +"
+"0","  scale_x_continuous(labels = function(x) paste0(x/1e9, ""M""))"
+"2","Error in ggplot(StartUp, aes(x = Investment.Amount..USD., y = Industry,  : 
+  could not find function ""ggplot""
+"

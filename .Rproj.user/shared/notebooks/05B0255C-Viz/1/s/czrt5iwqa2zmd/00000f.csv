@@ -1,0 +1,21 @@
+"0","library(MASS)"
+"2","
+Attaching package: ‘MASS’
+
+"
+"2","The following object is masked _by_ ‘.GlobalEnv’:
+
+    drivers
+
+"
+"0","library(ggplot2)"
+"0","data(survey)"
+"0","survey = survey[complete.cases(survey), ]"
+"0",""
+"0","ggplot(survey, aes(x = Height, y = Pulse)) +"
+"0","  stat_density_2d(aes(fill = after_stat(level)), geom = ""polygon"", "
+"0","                  color = ""steelblue"", h = c(25, 20)) +"
+"0","  scale_fill_distiller(palette = ""GnBu"") +"
+"0","  xlab(""Height (inches)"") +"
+"0","  ylab(""Pulse (bpm)"") +"
+"0","  ggtitle(""Pulse and Height Density"")"

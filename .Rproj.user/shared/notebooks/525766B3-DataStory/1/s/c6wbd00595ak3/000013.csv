@@ -1,0 +1,6 @@
+"0","plot = ggplot(champ_wins_year, aes(x = year, y = win_rate, fill = status)) +"
+"0","  geom_bar(stat=""identity"") +"
+"0","  ylab(""Win Percentage"") +"
+"0","  scale_y_continuous(labels = function(x) paste0(x * 100, ""%""))"
+"0",""
+"0","ggplotly(plot)"

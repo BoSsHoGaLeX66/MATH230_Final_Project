@@ -1,0 +1,5 @@
+"0","big_data$rank = replace_na(as.numeric(big_data$rank), 20)"
+"2","Warning: NAs introduced by coercion"
+"0","big_data$win = ifelse(big_data$positionOrder == 1, 1, 0)"
+"0","avg_big_data_driver = aggregate(big_data[,c(""grid"", ""positionOrder"", ""win"")], big_data[c(""driverId"", ""surname"", ""forename"")], ""mean"")"
+"0","avg_big_data_driver"

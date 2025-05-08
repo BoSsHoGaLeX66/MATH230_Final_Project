@@ -1,0 +1,17 @@
+name: "alex_searle_math230"
+title: "Alex Searle"
+theme: mytheme.css
+description: |
+  My Website
+output_dir: "docs"
+navbar:
+  right:
+    - text: "Home"
+      href: index.html
+    - text: "About"
+      href: about.html
+    - text: "Viz"
+      href: Viz.html
+    - text: "F1 Champions"
+      href: DataStory.html
+output: distill::distill_article

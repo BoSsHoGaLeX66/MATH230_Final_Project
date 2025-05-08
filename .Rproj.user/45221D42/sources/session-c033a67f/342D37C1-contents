@@ -1,0 +1,27 @@
+---
+title: "Alex Searle"
+image: "AlexHeadShot.jpeg"
+links:
+  - label: Resume
+    url: "https://linkedin.com/in/scott-alex-searle"
+  - label: Github
+    url: "https://github.com/BoSsHoGaLeX66"
+site: distill::distill_website
+output:
+  postcards::solana
+---
+ 
+## Bio
+
+Alex Searle is a Sophmore Computer Science and Engineering, Data Science Co-Major at Bucknell University.
+
+## Education
+
+**Bucknell Unniversity** | Lewisburg, PA | Expected Graduation: May 2027  
+**BS in Computer Science and Engineering** | **Data Science Co-Major** | **Mathematics Minor** | GPA: 3.93/4.0
+
+## Experience
+
+**Aviat Netowrks** | Data Analyst Intern | June 2024 - April 2025  
+
+**Powerfleet** | Data Science Intern | May 2023 - August 2023

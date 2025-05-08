@@ -1,0 +1,1 @@
+"0","avg_all_time_greats = aggregate(all_time_greats[,c(""grid"", ""positionOrder"", ""win"")], all_time_greats[c(""driverId"", ""surname"", ""forename"")], ""mean"")"

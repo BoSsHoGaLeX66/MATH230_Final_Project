@@ -1,0 +1,6 @@
+"0","library(ggplot2)"
+"0","library(ggdensity)"
+"0","library(ggridges)"
+"0","race_results = read.csv(""data/Race_Results.csv"")"
+"0","drivers = read.csv(""data/Driver_Details.csv"")"
+"0","merged = merge(x = race_results, y = drivers, by = ""driverId"")"

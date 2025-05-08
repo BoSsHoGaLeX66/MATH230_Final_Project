@@ -1,0 +1,4 @@
+"0","ggplot(all_time_greats[all_time_greats$fullname == ""Juan Fangio"", ], aes(x = date, y = positionOrder)) +"
+"0","  geom_point() +"
+"0","  theme(axis.text.x = element_text(angle = 90, vjust=0.5, hjust=1)) +"
+"0","  ggtitle(""Juan Fangio"")"

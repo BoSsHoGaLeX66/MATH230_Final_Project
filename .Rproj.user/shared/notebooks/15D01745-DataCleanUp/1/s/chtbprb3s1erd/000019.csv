@@ -1,0 +1,3 @@
+"0","avg_all_time_greats = merge(avg_all_time_greats, world_champs_wins, by=""driverId"", all.x=TRUE, all.y=FALSE)"
+"0","row.names(avg_all_time_greats) = c(""Hamilton"", ""Vettel"", ""Schumacher"", ""Senna"", ""Fangio"", ""Verstappen"")"
+"0","avg_all_time_greats"

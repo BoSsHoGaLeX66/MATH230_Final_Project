@@ -1,0 +1,149 @@
+---
+title: "Vizualizations"
+description: |
+  Some of the visualizations that I have created
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r}
+library(htmltools)
+h1("MATH230 Dashboard")
+p("This dashboard was created to help teach intro stats students about sampling distributions.
+It was created using Flex Dashboards and R Shiny.")
+```
+
+
+<iframe src="https://abby-flynt.shinyapps.io/SamplingDistributions_Dashboard_Team4/" class="l-screen-inset shaded" height="1000px" width="1200px"></iframe>
+
+
+```{r}
+library(ggridges)
+StartUp = read.csv("data/startup_growth_investment_data.csv")
+ggplot(StartUp, aes(x = Investment.Amount..USD., y = Industry, 
+                    fill = after_stat(x))) +
+  geom_density_ridges_gradient(scale = 2, rel_min_height = 0.05,
+                               quantile_lines = TRUE) +
+  scale_fill_viridis_c() +
+  scale_x_continuous(labels = function(x) paste0(x/1e9, "B")) +
+  xlab("Investment Amount (In Billions of Dollars USD)")
+
+```
+
+```{r}
+library(MASS)
+library(ggplot2)
+data(survey)
+survey = survey[complete.cases(survey), ]
+
+ggplot(survey, aes(x = Height, y = Pulse)) +
+  stat_density_2d(aes(fill = after_stat(level)), geom = "polygon", 
+                  color = "steelblue", h = c(25, 20)) +
+  scale_fill_distiller(palette = "GnBu") +
+  xlab("Height (inches)") +
+  ylab("Pulse (bpm)") +
+  ggtitle("Pulse and Height Density")
+```
+
+
+```{r}
+library(Lock5Data)
+data(CollegeScores)
+CollegeData = CollegeScores[complete.cases(CollegeScores),]
+rm(CollegeScores)
+CollegeData = CollegeData[
+  CollegeData$Region != names(summary(CollegeData$Region)
+                              [summary(CollegeData$Region) == 1]),
+]
+CollegeData$Locale = factor(CollegeData$Locale)
+CollegeData$Region = factor(CollegeData$Region)
+CollegeData$Main = factor(CollegeData$Main, 
+                          labels = c("Branch campus", "Main Campus"))
+CollegeData$MainDegree = factor(CollegeData$MainDegree, levels = c(0:4),
+                                labels=c("Not Classified", "Certificate", 
+                                         "Associate", "Bachelors", "Only Grad"))
+CollegeData$HighDegree = factor(CollegeData$HighDegree, levels = c(0:4),
+                                labels=c("No Degress", "Certificate", 
+                                         "Associate", "Bachelors",
+                                         "Graduate"))
+CollegeData$MainDegree = factor(CollegeData$MainDegree)
+CollegeData$HighDegree = factor(CollegeData$HighDegree)
+names(CollegeData)[names(CollegeData) == "Control"] = "Type"
+attach(CollegeData)
+
+bucknell = Name == "Bucknell University"
+
+ggplot(CollegeData, aes(x = CompRate, y = MedIncome, color = bucknell, 
+                        shape = Locale, size = bucknell)) +
+  geom_point() +
+  scale_color_manual(values = c("#003865", "#E87722")) +
+  scale_shape_manual(values = c(3, 4, 0, 17)) +
+  scale_y_continuous(labels = function(x) paste0(x, "k")) +
+  scale_x_continuous(labels = function(x) paste0(x, "%")) +
+  labs(color = "Bucknell", size = "Bucknell") +
+  xlab("Graduation Rate") +
+  ylab("Median Income (USD)") +
+  ggtitle("Bucknell: A Wealthy Town School with a High Graduation Rate")
+  
+detach(CollegeData)
+```
+
+
+```{r}
+h3("How many students want which prizes?")
+p("The dataset that was used to create this visualization was
+  the StudentSurvey dataset from the Lock5 package. The data that is contained
+  in this data set is the survey results from 362 students in an intro Stats
+  course. In this visualization we look at which awards these students want to win
+  the most and the least.")
+ggplot(StudentSurvey, aes(x = Award, y = after_stat(count/sum(count)))) +
+  geom_bar(fill = "steelblue1") +
+  xlab("Preferred Award") +
+  ylab("Relative Frequency/Percent") +
+  ggtitle("Barchart of Award")
+```
+
+
+```{r}
+h3("Frequency of Smokers and Non-Smokers by Vitamin Use")
+p("The dataset that was used to create this visualization was
+         the NutritionStudy dataset from the Lock5 package. This dataset contains
+         data about the nutrition and health of 315 people. In this graphic we 
+         look at the relationship between Vitamin Use Frequencey and it's relationship
+         with weather or not the person is a smoker.")
+
+data(NutritionStudy)
+NutritionStudy = NutritionStudy[NutritionStudy$Alcohol < 100, ]
+
+ggplot(NutritionStudy, aes(x = VitaminUse, fill = Smoke)) +
+  geom_bar(position = "fill") +
+  scale_fill_manual(values = c("green4", "grey4")) +
+  xlab("Vitamin Use") +
+  ylab("Frequency") +
+  ggtitle("Frequency of Smokers and Non-Smokers by Vitamin Use")
+
+```
+
+```{r}
+h3("Alchol consumption by different levels of vitamin use")
+p("The dataset that was used to create this visualization was
+  the NutritionStudy dataset from the Lock5 package.  Just like in 
+  the last visualization. This visualization looks at the relationship between
+  how often you use and vitamins and how many alcholic beverages you consume
+  in a week.")
+
+ggplot(NutritionStudy, aes(x = VitaminUse, y = Alcohol, fill = VitaminUse)) +
+  geom_violin(alpha = 0.5,  scale = "width") +
+  guides(fill = "none") + 
+  xlab("Vitamin Use") +
+  ylab("Alcohol Consumption (drinks per week)") +
+  ggtitle("Distribution of Alcohol Consumption Vs. Vitamin Use")
+```
+
+
+![Art created using aRt package](WhirlPool.png)
+
+![Smoke Trail art created using aRt](BucknellSmokeTrails.png)
+

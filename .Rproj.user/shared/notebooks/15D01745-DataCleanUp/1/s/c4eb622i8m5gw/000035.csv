@@ -1,0 +1,4 @@
+"0","ggplot(merged[-(merged$fullname %in% c(""Max Verstappen"", ""Lewis Hamilton"", ""Sebastian Vettel"", ""Michael Schumacher"", ""Ayrton Senna"", ""Juan Fangio"")), ], aes(x = grid, y = positionOrder)) +"
+"0","  stat_density_2d(aes(fill = after_stat(level)), geom=""polygon"", color=""white"", "
+"0","                  h=c(3,3), bins=9) +"
+"0","  scale_fill_distiller(palette = ""BuPu"")"

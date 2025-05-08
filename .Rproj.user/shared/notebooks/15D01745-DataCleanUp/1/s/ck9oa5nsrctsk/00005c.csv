@@ -1,0 +1,2 @@
+"0","legend(x=""bottom"", legend=rownames(avg_all_time_greats_radar[-c(1,2),]),horiz=TRUE, bty=""n"","
+"0","       cex=0.75)"

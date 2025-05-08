@@ -1,0 +1,3 @@
+"0","world_champs_races$win = ifelse(world_champs_races$positionOrder == 1, 1, 0)"
+"0","world_champs_races$win = as.numeric(world_champs_races$win)"
+"0","world_champs_wins = aggregate(world_champs_races[,""win""], world_champs_races[,c(""surname"", ""driverId"")], ""sum"")"

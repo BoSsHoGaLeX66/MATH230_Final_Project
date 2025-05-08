@@ -1,0 +1,253 @@
+---
+title: "DataCleanUp"
+output: html_document
+---
+
+```{r}
+library(ggplot2)
+library(ggdensity)
+library(ggridges)
+race_results = read.csv("data/Race_Results.csv")
+drivers = read.csv("data/Driver_Details.csv")
+merged = merge(x = race_results, y = drivers, by = "driverId")
+```
+```{r}
+circuit_data = read.csv("data/Track_Information.csv")
+circuit_data
+```
+```{r}
+pit_stops = read.csv("data/Pit_Stop_Records.csv")
+
+current_drivers = c("hamilton", "verstappen", "tsunoda", "leclerc", "piastri", 
+                    "norris", "russell", "perez", "albon", "ocon", "stroll",
+                    "gasly", "hulkenberg", "magnussen", "ricciardo", "sainz", "alonso",
+                    "lawson", "sargeant", "bottas")
+race_info = read.csv("data/Race_Schedule.csv")
+driver_numbers = NULL
+count = 0
+for(driver in current_drivers) {
+  driver_numbers[count] = drivers$driverId[drivers$driverRef == driver]
+  count = count + 1
+}
+raceIds_24 = race_info$raceId[race_info$year == 2024]
+
+pit_times_24 = pit_stops[pit_stops$driverId %in% driver_numbers & pit_stops$raceId %in% raceIds_24, ]
+pit_times_24 = merge(x = pit_times_24, y= drivers, by = "driverId")
+pit_times_24$duration = as.numeric(pit_times_24$duration)
+```
+
+```{r}
+ggplot(pit_times_24, aes(x = duration, y = surname, fill = surname)) +
+  geom_density_ridges(rel_min_height = 0.05)
+```
+
+```{r}
+world_champs = read.csv("data/world_champs.csv")
+
+world_champs_races = merged[(merged$surname %in% world_champs$Last) & (merged$forename %in% world_champs$First), ]
+world_champs_races = merge(world_champs_races, race_info, by="raceId")
+world_champs_races
+```
+
+```{r}
+world_champs_races$win = ifelse(world_champs_races$positionOrder == 1, 1, 0)
+world_champs_races$win = as.numeric(world_champs_races$win)
+world_champs_wins = aggregate(world_champs_races[,"win"], world_champs_races[,c("surname", "driverId")], "sum")
+```
+```{r}
+num_races = function(row) {
+  driver <- row[1]                    # first element is the surname
+  sum(!duplicated(
+        world_champs_races$raceId[world_champs_races$surname == driver]))
+}
+
+world_champs_wins$num.races = apply(world_champs_wins, 1, num_races)
+world_champs_wins$win.prop = world_champs_wins$x / world_champs_wins$num.races
+
+ggplot(world_champs_wins, aes(y = win.prop, x = surname)) +
+  geom_bar(stat="identity") +
+  theme(axis.text.x = element_text(angle = 45, vjust=1, hjust=1))
+```
+```{r}
+ggplot(world_champs_wins, aes(y = x, x = surname)) +
+  geom_bar(stat="identity") +
+  theme(axis.text.x = element_text(angle = 45, vjust=1, hjust=1))
+```
+```{r}
+driver_standings = read.csv("data/Driver_Rankings.csv")
+# champions per season
+champions_per_year <- merge(
+  merge(driver_standings, race_info[, c("raceId", "year")]),
+  drivers[, c("driverId", "surname")]
+)
+
+champions_per_year <- champions_per_year[
+  champions_per_year$position == 1, ]
+
+# take only the final race of the season
+champions_per_year <- champions_per_year[ave(
+  champions_per_year$raceId,
+  champions_per_year$year,
+  FUN = max) == champions_per_year$raceId,
+  c("year", "surname")
+]
+
+# now filter & aggregate
+tmp <- merge(world_champs_races, champions_per_year,
+             by = c("year", "surname"))
+
+wins_df  <- aggregate(positionOrder ~ year + surname, tmp,
+                      function(x) sum(x == 1))
+races_df <- aggregate(raceId        ~ year + surname, tmp,
+                      function(x) length(unique(x)))
+names(wins_df)[3]  <- "wins"
+names(races_df)[3] <- "races"
+
+champ_wins_year <- merge(wins_df, races_df, by = c("year", "surname"))
+champ_wins_year$win_rate <- with(champ_wins_year, wins / races)
+champ_wins_year <- champ_wins_year[order(champ_wins_year$year), ]
+
+champ_wins_year
+```
+```{r}
+ggplot(champ_wins_year, aes(x = year, y = win_rate, fill = surname)) +
+  geom_bar(stat="identity")
+```
+
+```{r}
+library(tidyr)
+big_data = merge(merged, race_info, by="raceId")
+big_data = merge(big_data, driver_standings, by=c("driverId", "raceId"))
+big_data[big_data$year == 2024, ]
+big_data$rank = replace_na(as.numeric(big_data$rank), 20)
+big_data$win = ifelse(big_data$positionOrder == 1, 1, 0)
+avg_big_data_driver = aggregate(big_data[,c("grid", "positionOrder", "win")], big_data[c("driverId", "surname", "forename")], "mean")
+avg_big_data_driver
+```
+```{r}
+library(hexbin)
+
+hex = hexbin(avg_big_data_driver[,"grid"], avg_big_data_driver[, "win"], xbins= 20)
+plot(hex)
+```
+
+```{r}
+hex = hexbin(avg_big_data_driver[,"grid"], avg_big_data_driver[, "positionOrder"], xbins= 20)
+plot(hex)
+```
+```{r}
+merged$fullname = paste(merged$forename, merged$surname)
+all_time_greats = merged[(merged$fullname %in% c("Max Verstappen", "Lewis Hamilton", "Sebastian Vettel", "Michael Schumacher", "Ayrton Senna", "Juan Fangio")), ]
+all_time_greats = merge(all_time_greats, race_info, by="raceId")
+all_time_greats$win = ifelse(all_time_greats$positionOrder == 1, 1, 0)
+```
+
+```{r}
+ggplot(all_time_greats, aes(x=fullname, y = positionOrder, fill=fullname)) +
+  geom_violin() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+```
+
+```{r}
+ggplot(all_time_greats[all_time_greats$fullname == "Max Verstappen", ], aes(x = date, y = positionOrder)) +
+  geom_point() +
+  geom_line() +
+  theme(axis.text.x = element_text(angle = 90, vjust=0.5, hjust=1)) +
+  ggtitle("Max Race Results")
+```
+```{r}
+ggplot(all_time_greats[all_time_greats$fullname == "Lewis Hamilton", ], aes(x = date, y = positionOrder)) +
+  geom_point() +
+  geom_line() +
+  theme(axis.text.x = element_text(angle = 90, vjust=0.5, hjust=1)) +
+  ggtitle("Lewis Race Results")
+```
+
+```{r}
+ggplot(all_time_greats[all_time_greats$fullname == "Michael Schumacher", ], aes(x = date, y = positionOrder)) +
+  geom_point() +
+  geom_line() +
+  theme(axis.text.x = element_text(angle = 90, vjust=0.5, hjust=1)) +
+  ggtitle("Schumacher Race Results")
+```
+
+```{r}
+ggplot(all_time_greats[all_time_greats$fullname == "Ayrton Senna", ], aes(x = date, y = positionOrder)) +
+  geom_point() +
+  geom_line() +
+  theme(axis.text.x = element_text(angle = 90, vjust=0.5, hjust=1)) +
+  ggtitle("Senna Race Results")
+```
+
+```{r}
+ggplot(all_time_greats[all_time_greats$fullname == "Sebastian Vettel", ], aes(x = date, y = positionOrder)) +
+  geom_point() +
+  geom_line() +
+  theme(axis.text.x = element_text(angle = 90, vjust=0.5, hjust=1)) +
+  ggtitle("Vettel Race Results")
+```
+
+```{r}
+ggplot(all_time_greats[all_time_greats$fullname == "Juan Fangio", ], aes(x = date, y = positionOrder)) +
+  geom_point() +
+  theme(axis.text.x = element_text(angle = 90, vjust=0.5, hjust=1)) +
+  ggtitle("Juan Fangio")
+```
+
+```{r}
+ggplot(all_time_greats, aes(x = grid, y = fullname, fill = fullname)) +
+  geom_density_ridges(rel_min_height=0.05)
+```
+
+```{r}
+ggplot(merged[-(merged$fullname %in% c("Max Verstappen", "Lewis Hamilton", "Sebastian Vettel", "Michael Schumacher", "Ayrton Senna", "Juan Fangio")), ], aes(x = grid, y = positionOrder)) +
+  stat_density_2d(aes(fill = after_stat(level)), geom="polygon", color="white", 
+                  h=c(3,3), bins=9) +
+  scale_fill_distiller(palette = "BuPu")
+```
+
+```{r}
+ggplot(all_time_greats, aes(x = grid, y = positionOrder)) +
+  stat_density_2d(aes(fill = after_stat(level)), geom="polygon", color="white", bins = 13) +
+  scale_fill_distiller(palette = "BuPu") +
+  scale_y_continuous(limits=c(0,35)) +
+  scale_x_continuous(limits=c(0,25))
+```
+
+```{r}
+avg_all_time_greats = aggregate(all_time_greats[,c("grid", "positionOrder", "win")], all_time_greats[c("driverId", "surname", "forename")], "mean")
+```
+```{r}
+ggplot(avg_all_time_greats, aes(x=grid, y=win)) +
+  geom_point() +
+  scale_x_continuous(limits=c(0,35)) +
+  scale_y_continuous(limits=c(0,0.5))
+```
+
+```{r}
+ggplot(avg_all_time_greats, aes(x=grid, y=positionOrder)) +
+  geom_point() +
+  scale_x_continuous(limits=c(0,35)) +
+  scale_y_continuous(limits=c(0,40))
+```
+```{r}
+avg_all_time_greats = merge(avg_all_time_greats, world_champs_wins, by="driverId", all.x=TRUE, all.y=FALSE)
+row.names(avg_all_time_greats) = c("Hamilton", "Vettel", "Schumacher", "Senna", "Fangio", "Verstappen")
+avg_all_time_greats
+```
+```{r}
+library(dplyr)
+
+avg_all_time_greats_radar <- avg_all_time_greats %>%
+  select(-driverId, -surname.x, -surname.y, -forename, -win.prop)
+library(fmsb)
+max_min = data.frame(
+  grid=c(7,1), positionOrder=c(9,1), win=c(0,1), x=c(0,110), num.races=c(30, 350)
+)
+row.names(max_min) = c("Min", "Max")
+avg_all_time_greats_radar = rbind(max_min, avg_all_time_greats_radar)
+radarchart(avg_all_time_greats_radar)
+legend(x="bottom", legend=rownames(avg_all_time_greats_radar[-c(1,2),]),horiz=TRUE, bty="n",
+       cex=0.75)
+```
+

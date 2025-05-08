@@ -1,0 +1,2 @@
+"0","ggplot(pit_times_24, aes(x = duration, y = surname, fill = surname)) +"
+"0","  geom_density_ridges(rel_min_height = 0.05)"

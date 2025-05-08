@@ -1,0 +1,65 @@
+```{r}
+world_champs = read.csv("f1_world_champs.csv")
+drivers = read.csv("drivers.csv")
+```
+
+```{r}
+drivers$WorldChamp = drivers$surname %in% world_champs$Last
+```
+
+
+```{r}
+agg.drivers = aggregate(drivers, by=list(drivers$nationality), FUN=mean)
+agg.drivers = agg.drivers[agg.drivers$WorldChamp != 0, ]
+rownames(agg.drivers) = NULL
+agg.drivers$WorldChamp = as.numeric(as.character(agg.drivers$WorldChamp))
+agg.drivers = agg.drivers[order(agg.drivers$WorldChamp, decreasing = TRUE), ]
+agg.drivers
+```
+```{r}
+ library(ggpattern) #remotes::install_github("coolbutuseless/ggpattern")
+    library(ggplot2)
+    library(magick)
+    library(tibble)
+    library(dplyr)
+    flag.img.names = c("FinlandFlag.png", "BrazilFlag.png", "AustraliaFlag.png",
+                       "CanadaFlag.png", "AustriaFlag.png", "DutchFlag.png", "GermanyFlag.png",
+                       "NewZealandFlag.png", "SouthAfrica.jpeg", "BritianFlag.png",
+                       "SpainFlag.png", "ArgentinaFlag.png", "AmericaFlag.png", 
+                       "ItalyFlag.png", "FranceFlag.png")
+    img_paths = NULL
+    for(i in 1:length(flag.img.names)) {
+      # flag_img<-magick::image_read(flag.img.names[i])%>%
+      # magick::image_rotate(., 90) %>%image_crop(., "725x600+50+75")
+      # magick::image_write(flag_img, path = paste("edit_", flag.img.names[i], sep=""), format="png")
+      img_paths[i] = list.files(pattern = flag.img.names[i], full.names = TRUE)
+    }
+    #Get images to use as textures. Edit using magick library
+    # Finland_img<-magick::image_read(c("FinlandFlag.png"))%>%
+    # magick::image_rotate(., 90) %>%image_crop(., "725x600+50+75")
+    # water_img<-image_read_svg('https://upload.wikimedia.org/wikipedia/commons/0/06/Water_compartment.svg') %>%image_crop(., "500x250+150")
+    #save edited images locally
+    # magick::image_write(cake_img, path = "cake.png", format = "png")
+    # magick::image_write(water_img, path = "water.png", format = "png")
+    #Create a vector of filepaths to the images that will be used
+    # n_cake_img<-list.files(pattern = 'cake.png',full.names=TRUE) %>% rep(.,nrow(cakes)-1)
+#The vector of image paths is same length as data to be visualized.
+# img_paths<-c(n_cake_img, list.files(pattern = 'water.png',full.names=TRUE))
+```
+
+```{r}
+library(ggplot2)
+ggplot(agg.drivers, aes(img_paths)) +
+  geom_col_pattern(aes(x = reorder(Group.1, -WorldChamp), y = WorldChamp, fill = Group.1, pattern_filename = reorder(Group.1, -WorldChamp)), 
+                   pattern = "image",
+                   pattern_fill = "white",
+                   pattern_type = "tile", 
+                   pattern_scale = -1) +
+  scale_pattern_filename_discrete(choices = img_paths) +
+  theme(axis.text.x = element_text(angle = -45, vjust = 0.5, hjust=0.01),
+        legend.position = "none") +
+  xlab("Nationality") +
+  ylab("Proportion") +
+  ggtitle("Does Nationality Affect your Chances of Becoming an F1 World Champion?")
+```
+
