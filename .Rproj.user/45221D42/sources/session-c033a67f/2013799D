@@ -3,7 +3,7 @@
     "path": "~/alex_searle_math230/DataCleanUp.Rmd",
     "project_path": "DataCleanUp.Rmd",
     "type": "r_markdown",
-    "hash": "0",
+    "hash": "4109830459",
     "contents": "",
     "dirty": false,
     "created": 1745865767836.0,
@@ -12,15 +12,15 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "68,65",
-        "scrollLine": "50"
+        "cursorPosition": "254,0",
+        "scrollLine": "240"
     },
     "folds": "",
-    "lastKnownWriteTime": 1746562244,
+    "lastKnownWriteTime": 1746735141,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1746562244342,
+    "last_content_update": 1746735141734,
     "read_only": false,
     "read_only_alternatives": []
 }

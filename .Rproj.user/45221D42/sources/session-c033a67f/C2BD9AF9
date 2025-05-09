@@ -3,7 +3,7 @@
     "path": "~/alex_searle_math230/Viz.Rmd",
     "project_path": "Viz.Rmd",
     "type": "r_markdown",
-    "hash": "0",
+    "hash": "3096208611",
     "contents": "",
     "dirty": false,
     "created": 1745433219618.0,
@@ -12,16 +12,16 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "6,0",
+        "cursorPosition": "15,17",
         "scrollLine": "0",
         "last_setup_crc32": ""
     },
     "folds": "",
-    "lastKnownWriteTime": 1746470806,
+    "lastKnownWriteTime": 1746747782,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1746470806348,
+    "last_content_update": 1746747782360,
     "read_only": false,
     "read_only_alternatives": []
 }

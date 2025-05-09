@@ -1,6 +1,0 @@
-"0","driver = ggplot(merged_race_results[merged_race_results$status == ""driver"", ], aes(x = grid, y = positionOrder)) +"
-"0","  stat_density_2d(aes(fill = after_stat(level)), geom=""polygon"", color=""white"", "
-"0","                  h=c(3,3), bins=9) +"
-"0","  scale_fill_distiller(palette = ""BuPu"") +"
-"0","  ggtitle(""Drivers"")"
-"0","ggplotly(driver)"

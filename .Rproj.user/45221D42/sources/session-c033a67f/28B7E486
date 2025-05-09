@@ -3,7 +3,7 @@
     "path": "~/alex_searle_math230/DataStory.Rmd",
     "project_path": "DataStory.Rmd",
     "type": "r_markdown",
-    "hash": "2653328561",
+    "hash": "2145337409",
     "contents": "",
     "dirty": false,
     "created": 1746470104422.0,
@@ -12,16 +12,16 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "145,94",
-        "scrollLine": "133",
+        "cursorPosition": "233,3",
+        "scrollLine": "221",
         "last_setup_crc32": "c033a67fc4e2d899"
     },
     "folds": "",
-    "lastKnownWriteTime": 1746716527,
+    "lastKnownWriteTime": 1746747870,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1746716527487,
+    "last_content_update": 1746747870459,
     "read_only": false,
     "read_only_alternatives": []
 }

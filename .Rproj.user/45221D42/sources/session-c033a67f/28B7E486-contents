@@ -12,14 +12,22 @@ library(ggridges)
 library(plotly)
 library(tidyr)
 library(htmltools)
+library(ggbump)
 
 race_results = read.csv("data/Race_Results.csv")
 drivers = read.csv("data/Driver_Details.csv")
 race_info = read.csv("data/Race_Schedule.csv")
 world_champs = read.csv("data/world_champs.csv")
+track_info = read.csv("data/Track_Information.csv")
+lap_times = read.csv("data/Lap_Timings.csv")
+schedule = read.csv("data/Race_Schedule.csv")
 
 merged_race_results = merge(x = race_results, y = drivers, by = "driverId")
 merged_race_results$fullname = paste(merged$forename, merged$surname)
+
+lap_times_full = merge(lap_times, drivers, by="driverId")
+lap_times_full = merge(lap_times_full, schedule, by="raceId")
+lap_times_full = merge(lap_times_full, track_info, by="circuitId")
 
 world_champs_races = merged[(merged$surname %in% world_champs$Last) & (merged$forename %in% world_champs$First), ]
 world_champs_races = merge(world_champs_races, race_info, by="raceId")
@@ -46,11 +54,11 @@ avg_big_data_driver = aggregate(big_data[,c("grid", "positionOrder", "win")], bi
 driver_status = function(row) {
   driver = row["fullname"]
   if(driver %in% c("Max Verstappen", "Lewis Hamilton", "Sebastian Vettel", "Michael Schumacher", "Ayrton Senna", "Juan Fangio", "Alain Prost")) {
-    return("great")
+    return("Legend")
   } else if(driver %in% unique(world_champs_races$fullname)) {
-    return("champ")
+    return("Champion")
   } else {
-    return("driver")
+    return("Driver")
   }
 }
 world_champs_wins$status = apply(world_champs_wins, 1, driver_status)
@@ -113,7 +121,8 @@ p("Formula One is a cut throat sport where every millisecond counts. The differe
   to be F1 drivers who have won 4 or more world championships in their careers. These are Michael Schumacher,
   Lewis Hamilton, Juan Manuel Fangio, Alain Prost, Max Verstappen. We will also be including Aryton Senna,
   Although he does not have 4 world champion ship wins he is still one of the greatest F1 drivers of all time and would
-  have likely had many more wins if his life was not cut short in his tragic crash of 1994 at Imola.")
+  have likely had many more wins if his life was not cut short in his tragic crash of 1994 at Imola. All of these drivers
+  were at the top of the sport for years making them almost super human.")
 ```
 ```{r}
 h2("Champions have High win rates, Legends are even higher")
@@ -121,9 +130,11 @@ p("To become a F1 world champion you need to win a lot of the races in the seaso
   champions will have high win rates but some years will be lower than others when the title is highly contested and 
   nobody has run away with it. However when legends win titles they do it dominately winning a vast amount of races in the season.")
 plot = ggplot(champ_wins_year, aes(x = year, y = win_rate, fill = status)) +
+  scale_fill_manual(values=c("#7E9181", "#7316d7"), name="") +
   geom_bar(stat="identity") +
   ylab("Win Percentage") +
-  scale_y_continuous(labels = function(x) paste0(x * 100, "%"))
+  scale_y_continuous(labels = function(x) paste0(x * 100, "%")) +
+  ggtitle("Legends Have High Win Rates In Their Championship Winning Years")
 
 ggplotly(plot)
 
@@ -137,7 +148,13 @@ p("We also see this through out their entire careers not just they years that th
 
 plot = ggplot(world_champs_wins, aes(y = win.prop, x = surname, fill = status)) +
   geom_bar(stat="identity") +
-  theme(axis.text.x = element_text(angle = 45, vjust=1, hjust=1))
+  scale_fill_manual(values=c("#7E9181", "#7316d7"), name="") +
+  theme(axis.text.x = element_text(angle = 45, vjust=1, hjust=1)) + 
+  xlab("Driver") +
+  ylab("Win Percentage") +
+  ggtitle("Champions Win Legends Win Even More")
+ 
+  
 
 ggplotly(plot)
 p("As you can see in the chart above the all time greats have extremely high win rates
@@ -150,29 +167,28 @@ p("As you can see in the chart above the all time greats have extremely high win
 h2("Legends always fight back")
 p("What seperates the legends from the rest of the champions is that they can always fight back when they are on
   the back foot fighting through the grid to salvage a race or even challenge for the win from far back.")
-driver = ggplot(merged_race_results[merged_race_results$status == "driver", ], aes(x = grid, y = positionOrder)) +
+driver = ggplot(merged_race_results[merged_race_results$status == "Driver", ], aes(x = grid, y = positionOrder)) +
   stat_density_2d(aes(fill = after_stat(level)), geom="polygon", color="white", 
-                  h=c(3,3), bins=9) +
+                  h=c(3,4), bins=9) +
   scale_fill_distiller(palette = "BuPu") +
-  ggtitle("Drivers")
+  xlab("Starting Position") +
+  ylab("Finishing Position") +
+  ggtitle("Regular Drivers are Inconsistent")
 ggplotly(driver)
 
-champs = ggplot(merged_race_results[merged_race_results$status == "champ", ], aes(x = grid, y = positionOrder)) +
-  stat_density_2d(aes(fill = after_stat(level)), geom="polygon", color="white", 
-                  ) +
-  scale_fill_distiller(palette = "BuPu") +
-  ggtitle("Champs")
-
-greats = ggplot(merged_race_results[(merged_race_results$status == "great") | (merged_race_results$status == "champ"), ], aes(x = grid, y = positionOrder)) +
+greats = ggplot(merged_race_results[(merged_race_results$status == "Legend") | (merged_race_results$status == "Champion"), ], aes(x = grid, y = positionOrder)) +
   stat_density_2d(aes(fill = after_stat(level)), geom="polygon", color="white", 
                   h=c(3,3), bins=9) +
   scale_fill_distiller(palette = "BuPu") +
-  ggtitle("Greats") +
-  facet_wrap(~ status) +
+  ggtitle("Legends Start and Finish at the Top of the Grid") +
+  facet_wrap(~status) +
+  xlab("Starting Position") +
+  ylab("Finishing Position") +
   scale_y_continuous(limits = c(0,10)) +
   scale_x_continuous(limits = c(0, 10))
 
 ggplotly(greats)
+
 p("The all time greats can always fight back looking at the All time Greats graph you can see that they can always gain
   back positions even when they start a little farther back. This also shows us that they rarely ever start outside
   the top 6 and finish with in the top 5 a majority of the time while regular champs are a lot more inconsistent. From looking at 
@@ -183,20 +199,38 @@ p("The all time greats can always fight back looking at the All time Greats grap
   we can see that they are much better than normal drivers. Normal drivers are all over the place and there are higher likely hoods
   that when they start higher up on the grid that they fall back. And this is what sets the champions and the legends apart from the
   regular drivers, that the rarely lose positions in a race.")
-```
+p("An example of this is in the 2023 Jeddah Grand Prix where Max Verstappen Started 15th on the grid.")
 
+saudi_23 = lap_times_full[(lap_times_full$year == 2023) & (lap_times_full$country == "Saudi Arabia"), ]
+saudi_23$verstappen = ifelse(saudi_23$forename == "Max", "Verstappen", "Rest")
+
+colors = c("Verstappen"="#7316d7", "Other Drivers"=rep("#7E9181", 19))
+names(colors) = c("Verstappen", unique(saudi_23[(saudi_23$surname != "Verstappen"), "surname"]))
+ggplot(saudi_23, aes(lap, position, color = surname)) +
+  geom_bump(size = 1.25) +
+  scale_color_manual(breaks = c("Verstappen", "Other Drivers"), values=colors, name="Driver") +
+  xlab("Lap") +
+  ylab("Position") +
+  ggtitle("Max Storms through the field from 15th position") 
+
+p("As you can see in the graph above Max Verstappen is in purple and you can see that he
+  already gained back positions on the first lap and then went on to storm through the field to 
+  secure 2nd place starting from 15th. This is a mark of a legend even when they are put in tough situations
+  they can find that extra gear within themselves to charge through the field and get back on the podium. Max later 
+  went on to win the championship that year and this is one of the reasons why.")
+```
 ```{r}
-
+h2("Conclusion")
+p("Becoming a F1 world champion is no easy task in the people who are able are some of the greatest drivers 
+  to every walk this planet. But even among these champions there are still some who rise above the rest. 
+  These legends win multiple championships, come back from adversity, and always finish at the top of the grid.
+  Through looking at historical F1 data today we saw some of this. The win rates of Legends we higher than most other
+  drivers who one world championships showing that these drivers were dominate during their tenures in F1. We also saw
+  that when they won championships that did so with conviction winning a majority of the races for that season. We also
+  saw that these legends have a higher chance of starting and finishing on the top of the grid even when compared to other 
+  champions and an even greater chance than a regular driver. This is what sets them a part from the rest they win a lot
+  and are extremely consitent even when things don't go their way like when Max Verstappen fought back from 15th to finish 2nd.
+  The drivers that remain at the top of this sport for years are truely super human.")
 ```
 
-
-
-```{r}
-#plot = ggplot(merged_race_results, aes(x = grid, y = positionOrder, fill = status)) +
-  #geom_point(alpha = 0.3)
-  
-#ggplotly(plot)
-```
-```{r}
-```
 

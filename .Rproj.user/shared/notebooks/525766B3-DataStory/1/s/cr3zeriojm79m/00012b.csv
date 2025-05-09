@@ -1,0 +1,8 @@
+"0","driver = ggplot(merged_race_results[merged_race_results$status == ""Driver"", ], aes(x = grid, y = positionOrder)) +"
+"0","  stat_density_2d(aes(fill = after_stat(level)), geom=""polygon"", color=""white"", "
+"0","                  h=c(3,4), bins=9) +"
+"0","  scale_fill_distiller(palette = ""BuPu"") +"
+"0","  xlab(""Starting Position"") +"
+"0","  ylab(""Finishing Position"") +"
+"0","  ggtitle(""Regular Drivers are Inconsistent"")"
+"0","ggplotly(driver)"
